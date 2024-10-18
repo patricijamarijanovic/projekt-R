@@ -7,6 +7,12 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.lmnt.unity": {
+      "version": "file:com.lmnt.unity",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.readyplayerme.core": {
       "version": "https://github.com/readyplayerme/rpm-unity-sdk-core.git",
       "depth": 0,

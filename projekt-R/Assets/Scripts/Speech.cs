@@ -1,3 +1,4 @@
+using LMNT;
 using System;
 using System.IO;
 using UnityEngine;
@@ -7,8 +8,11 @@ public class AvatarSpeech : MonoBehaviour
     public AudioSource audioSource;
     public string audioFileName = "hello.wav";
 
+    private LMNTSpeech speech;
+
     void Start()
     {
+        /*
         string audioPath = Path.Combine(Application.streamingAssetsPath, audioFileName);
 
         AudioClip clip = LoadClip(audioPath);
@@ -21,6 +25,9 @@ public class AvatarSpeech : MonoBehaviour
         {
             Debug.LogError("Failed to load the audio clip from path: " + audioPath);
         }
+        */
+        speech = GetComponent<LMNTSpeech>();
+        StartCoroutine(speech.Talk());
     }
 
     AudioClip LoadClip(string path)

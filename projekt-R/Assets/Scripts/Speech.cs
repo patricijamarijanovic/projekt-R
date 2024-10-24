@@ -10,6 +10,9 @@ public class AvatarSpeech : MonoBehaviour
 
     private LMNTSpeech speech;
 
+    private string sentimentAPIUrl = "http://127.0.0.1:5000/analyze-sentiment";  // URL sentiment API-ja
+
+
     void Start()
     {
         /*

@@ -63,5 +63,42 @@ MonoBehaviour:
   MorphTargets:
   - Oculus Visemes
   - mouthSmile
+  - browDownLeft
+  - browDownRight
+  - browInnerUp
+  - browOuterUpLeft
+  - browOuterUpRight
+  - eyesClosed
   - eyeBlinkLeft
   - eyeBlinkRight
+  - eyeSquintLeft
+  - eyeSquintRight
+  - eyeWideLeft
+  - eyeWideRight
+  - eyesLookUp
+  - eyeLookDownLeft
+  - eyesLookDown
+  - eyeLookDownRight
+  - eyeLookUpLeft
+  - eyeLookInRight
+  - eyeLookInLeft
+  - eyeLookUpRight
+  - eyeLookOutLeft
+  - jawForward
+  - jawOpen
+  - eyeLookOutRight
+  - jawLeft
+  - cheekPuff
+  - noseSneerLeft
+  - noseSneerRight
+  - jawRight
+  - cheekSquintLeft
+  - cheekSquintRight
+  - mouthSmileLeft
+  - mouthSmileRight
+  - mouthOpen
+  - mouthSmile
+  - mouthLeft
+  - mouthRight
+  - tongueOut
+  - mouthPucker

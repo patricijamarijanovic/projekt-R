@@ -1,7 +1,7 @@
 INSTALACIJA:
 1.) PyCharm + okolina po želji venv/conda/...
 2.) Python verzija >= 3.9 && < 3.12 potrebna pri setup-u virtualnog okruženja zbog TTS 0.22.0
-3.) !!! pip install TTS odrađen !!! svi library-ji bit će negdje u projektu u folderu TTS Virtual Env
+3.) pip install TTS - ovo vam vjerojatno bude potrajalo
 4.) !!! OPTIONAL !!! https://github.com/espeak-ng/espeak-ng/releases/download/1.51/espeak-ng-X86.msi
 
 MODELI:
@@ -36,6 +36,7 @@ Speech.cs:
 	--> koristi statičku metodu iz TargetMorphController.cs za čitanje .txt datoteke
 	--> koristi člansku vaijablu da pamti stari tekst radi usporedbe
 
-VENV:
-pokreće se s: .venv/Scripts/activate
-python fileovi se pokreću s: python ../Assets/Scripts/<ime_skripte>
+VENV: 
+ja sam stavio u folder projekt-R pa sam od tamo u terminalu u PyCharm-u pokretao:
+.venv/Scripts/activate
+python ../Assets/Scripts/<ime_skripte>

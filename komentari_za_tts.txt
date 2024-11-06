@@ -1,0 +1,41 @@
+INSTALACIJA:
+1.) PyCharm + okolina po želji venv/conda/...
+2.) Python verzija >= 3.9 && < 3.12 potrebna pri setup-u virtualnog okruženja zbog TTS 0.22.0
+3.) !!! pip install TTS odrađen !!! svi library-ji bit će negdje u projektu u folderu TTS Virtual Env
+4.) !!! OPTIONAL !!! https://github.com/espeak-ng/espeak-ng/releases/download/1.51/espeak-ng-X86.msi
+
+MODELI:
+tts_models/en/ljspeech/glow-tts --> verzija ženskastog/mješovitog TTS-a, najbolje zbog kombinacije kvalitete zvuka i brzine
+tts_models/en/jenny/jenny --> lijepi, ali spor engleski ženski glas
+tts_models/hr/cv/vits --> hrvatski tts koji je asistent Antun spominjao, baziran i na muškom i ženskom glasu, ima poteškoća dosta
+tts_models/en/blizzard2013/capacitron-t2-c50 --> radi s emocijama, ali ne dobro baš
+--> oni se spremaju: C:\Users\<Username>\AppData\Local\tts
+
+OSNOVNE CMD NAREDBE ZA TTS:
+tts --list_models
+tts --text "Today is a very beautiful day!" --model_name tts_models/en/ljspeech/glow-tts --out_path outputs/output_eng.wav
+tts --text "Danas je jako lijep dan!" --model_name tts_models/hr/cv/vits --out_path outputs/output_hrv.wav
+
+SKRIPTE:
+!!! Pokreću se prvo analyse_emotions.py i tts_demo.py prije pokretanja Unity scene !!!
+
+analyse_emotions.py + TargetMorphController.cs:
+	--> Mario i Patricija napravili mapiranje emocija, treba malo doraditi manjak ili višak ekspresija na licu kod nekih emocija
+	--> u TargetMorphController.cs dodana Update metoda pa avatar mijenja lice i kod izgovora novog teksta
+	--> u TargetMorphController.cs dodana statička metoda za čitanje teksta iz .txt datoteke jer mi se to činilo kao najbolji 	    način komunikacije između .py i .cs skripti
+
+tts_demo.py:
+	--> omogućen odabir vrste TTS-a na engleskom i hrvatskom jeziku
+	--> korisnik u petlji upisuje tekst koji avatar treba reći pa se stvore .wav i .txt datoteke koje se koriste u .cs skriptama
+
+Speech.cs:
+	--> maknut LMNT
+	--> postoje i Start i Update metode
+	--> unosom novog teksta, mijenjaju se i ekspresije lica i .wav audioclip kojeg avatar koristi za govor
+	--> radi na principu da su svi "update-ovi" validni tek nakon što se sadržaj .txt datoteke promijeni
+	--> koristi statičku metodu iz TargetMorphController.cs za čitanje .txt datoteke
+	--> koristi člansku vaijablu da pamti stari tekst radi usporedbe
+
+VENV:
+pokreće se s: .venv/Scripts/activate
+python fileovi se pokreću s: python ../Assets/Scripts/<ime_skripte>

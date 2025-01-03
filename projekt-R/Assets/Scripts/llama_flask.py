@@ -77,6 +77,9 @@ def handle_conversation(context, user_input):
     result = chain.invoke({"context": context, "question": user_input})
     return result
 
+@app.route("/")
+def index():
+    return jsonify(200)
 
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -113,4 +116,4 @@ def chat():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5005)
+    app.run(debug=True, host="0.0.0.0", port=5006)

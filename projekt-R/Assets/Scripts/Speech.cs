@@ -1,29 +1,70 @@
 using System.Collections;
 using System.IO;
+using System.Linq.Expressions;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
+using System.Text.Json;
+using UnityEngine.UI;
 
 public class AvatarSpeech : MonoBehaviour
 {
+    public string Server_uri = "http://127.0.0.1:5005";
     public AudioSource audioSource;
-    private string previousText = "";
+    // private string previousText = "";
+
+    // string filePath = Path.Combine("Assets", "Resources", "output.txt");
 
     void Start()
     {
-        if (File.Exists(MorphTargetController.filePath)) 
-        {
-            previousText = MorphTargetController.getTextGeneratedByPython();
-            StartCoroutine(LoadAndPlayAudio());
-        }
+        // if (File.Exists(filePath)) 
+        // {
+        //     previousText = getTextGeneratedByPython();
+        //     StartCoroutine(LoadAndPlayAudio());
+        // }
     }
 
     void Update()
     {
-        // avatar speaks again only if the text has changed in output.txt
-        if (File.Exists(MorphTargetController.filePath) && !previousText.Equals(MorphTargetController.getTextGeneratedByPython()))
+        // // avatar speaks again only if the text has changed in output.txt
+        // if (File.Exists(filePath) && !previousText.Equals(getTextGeneratedByPython()))
+        // {
+        //     previousText = getTextGeneratedByPython();
+        //     StartCoroutine(LoadAndPlayAudio());
+        // }
+    }
+
+    // public string getTextGeneratedByPython() {
+    //     return File.ReadAllText(filePath);
+    // }
+
+    public void Say(string input)
+    {
+        var obj = new 
         {
-            previousText = MorphTargetController.getTextGeneratedByPython();
-            StartCoroutine(LoadAndPlayAudio());
+            text = input
+        };
+
+        string text = JsonConvert.SerializeObject(obj);
+        Debug.Log("Speech: " + text);
+        StartCoroutine(PostRequest(Server_uri, text));
+    }
+
+    public IEnumerator PostRequest(string uri, string body)
+    {
+        using (UnityWebRequest www = UnityWebRequest.Post($"{uri}", $"{body}", "application/json"))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("AS - Error: " + www.error);
+            }
+            else
+            {
+                Debug.Log(www.downloadHandler.text);
+                StartCoroutine(LoadAndPlayAudio());
+            }
         }
     }
 

@@ -6,12 +6,12 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using Unity.Jobs;
 
 public class MorphTargetController : MonoBehaviour
 {
     public SkinnedMeshRenderer skinnedMeshRenderer = null;
-    public static string filePath = Path.Combine("Assets", "Resources", "output.txt");
-    private string previousText = "";
+    // private string previousText = "";
 
     private readonly Dictionary<string, Dictionary<string, float>> emotionMappings = new Dictionary<string, Dictionary<string, float>>
     {
@@ -24,90 +24,86 @@ public class MorphTargetController : MonoBehaviour
 
     void Start()
     {
-        if (skinnedMeshRenderer == null)
-        {
-            Debug.LogError("SkinnedMeshRenderer 'Renderer_Head' not found.");
-            return;
-        }
-        if (File.Exists(filePath)) 
-        {
-            previousText = getTextGeneratedByPython();
-            StartCoroutine(RequestEmotionData(previousText));
-        } 
+        // if (skinnedMeshRenderer == null)
+        // {
+        //     Debug.LogError("SkinnedMeshRenderer 'Renderer_Head' not found.");
+        //     return;
+        // }
+        // if (File.Exists(filePath)) 
+        // {
+        //     previousText = getTextGeneratedByPython();
+        //     StartCoroutine(RequestEmotionData(previousText));
+        // } 
     }
 
     void Update()
     {
-        if (skinnedMeshRenderer == null)
-        {
-            Debug.LogError("SkinnedMeshRenderer 'Renderer_Head' not found.");
-            return;
-        }
-        if(File.Exists(filePath) && !previousText.Equals(MorphTargetController.getTextGeneratedByPython())) 
-        {
-            previousText = getTextGeneratedByPython();
-            StartCoroutine(RequestEmotionData(previousText));
-        }
+        // if (skinnedMeshRenderer == null)
+        // {
+        //     Debug.LogError("SkinnedMeshRenderer 'Renderer_Head' not found.");
+        //     return;
+        // }
+        // if(File.Exists(filePath) && !previousText.Equals(MorphTargetController.getTextGeneratedByPython())) 
+        // {
+        //     previousText = getTextGeneratedByPython();
+        //     StartCoroutine(RequestEmotionData(previousText));
+        // }
     }
 
-    public static string getTextGeneratedByPython() {
-        return File.ReadAllText(filePath);
-    }
+    // private IEnumerator RequestEmotionData(string message)
+    // {
+    //     TcpClient client = null;
+    //     NetworkStream stream = null;
 
-    private IEnumerator RequestEmotionData(string message)
-    {
-        TcpClient client = null;
-        NetworkStream stream = null;
+    //     try
+    //     {
+    //         client = new TcpClient("127.0.0.1", 5005);
+    //         stream = client.GetStream();
+    //         Debug.Log("Connected to Python server.");
 
-        try
-        {
-            client = new TcpClient("127.0.0.1", 5005);
-            stream = client.GetStream();
-            Debug.Log("Connected to Python server.");
+    //         Debug.Log("Sending message to Python server.");
+    //         byte[] data = Encoding.UTF8.GetBytes(message);
+    //         stream.Write(data, 0, data.Length);
+    //         stream.Flush();
 
-            Debug.Log("Sending message to Python server.");
-            byte[] data = Encoding.UTF8.GetBytes(message);
-            stream.Write(data, 0, data.Length);
-            stream.Flush();
+    //         Debug.Log("Waiting for response from Python server.");
+    //         byte[] buffer = new byte[1024];
+    //         int bytesRead = stream.Read(buffer, 0, buffer.Length);
+    //         if (bytesRead > 0)
+    //         {
+    //             string json = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+    //             Debug.Log($"Received JSON: {json}");
+    //             // AdjustMorphTargets(json);
+    //         }
+    //         else
+    //         {
+    //             Debug.LogWarning("Received 0 bytes. Connection may be closed.");
+    //         }
+    //     }
+    //     catch (SocketException ex)
+    //     {
+    //         Debug.LogError($"SocketException: {ex.Message}");
+    //     }
+    //     catch (System.Exception ex)
+    //     {
+    //         Debug.LogError($"Unexpected error: {ex.Message}");
+    //     }
+    //     finally
+    //     {
+    //         if (stream != null)
+    //             stream.Close();
+    //         if (client != null)
+    //             client.Close();
+    //     }
 
-            Debug.Log("Waiting for response from Python server.");
-            byte[] buffer = new byte[1024];
-            int bytesRead = stream.Read(buffer, 0, buffer.Length);
-            if (bytesRead > 0)
-            {
-                string json = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                Debug.Log($"Received JSON: {json}");
-                AdjustMorphTargets(json);
-            }
-            else
-            {
-                Debug.LogWarning("Received 0 bytes. Connection may be closed.");
-            }
-        }
-        catch (SocketException ex)
-        {
-            Debug.LogError($"SocketException: {ex.Message}");
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError($"Unexpected error: {ex.Message}");
-        }
-        finally
-        {
-            if (stream != null)
-                stream.Close();
-            if (client != null)
-                client.Close();
-        }
+    //     yield return null;
+    // }
 
-        yield return null;
-    }
-
-    private void AdjustMorphTargets(string json)
+    public void AdjustMorphTargets(JObject json)
     {
         try
         {
-            JObject emotionData = JObject.Parse(json);
+            JObject emotionData = json.GetValue("emotion_scores") as JObject;
 
             var primaryEmotion = emotionData.Properties()
                 .OrderByDescending(e => (float)e.Value)
@@ -116,7 +112,8 @@ public class MorphTargetController : MonoBehaviour
             if (primaryEmotion != null)
             {
                 string emotionKey = primaryEmotion.Name;
-                float score = (float)primaryEmotion.Value * 100;
+                // float score = (float)primaryEmotion.Value * 100;
+                float score = (float)primaryEmotion.Value;
 
                 Debug.Log($"Primary emotion: {emotionKey} with score: {score}");
                 ResetBlendShapes();
@@ -144,7 +141,7 @@ public class MorphTargetController : MonoBehaviour
         {
             foreach (var morph in morphMap)
             {
-                float weight = (morph.Value * (score / 100));
+                float weight = morph.Value * (score / 100);
                 SetBlendShapeWeight(morph.Key, weight);
                 Debug.Log($"Applying {morph.Key} with weight: {weight}");
             }

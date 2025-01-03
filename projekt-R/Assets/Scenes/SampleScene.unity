@@ -502,6 +502,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2954bfc53cbd3cc43a52168874c128d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Server_uri: http://127.0.0.1:5005
   audioSource: {fileID: 7931222544154874351}
 --- !u!82 &7931222544154874351
 AudioSource:
@@ -599,20 +600,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &7931222544154874352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1155530897894873340}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b40e181ef7f384f5e895d4dc3eee0702, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  voice: Daniel
-  _dialogue: It's a very nice day to enjoy.
 --- !u!114 &7931222544154874353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -626,6 +613,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skinnedMeshRenderer: {fileID: 4073908910306699235}
+--- !u!114 &7931222544154874356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1155530897894873340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1033faefbf4d0884f97ddf6398fe2731, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MTC: {fileID: 7931222544154874353}
+  AS: {fileID: 7931222544154874350}
+  Server_uri: http://127.0.0.1:5006
+  Entry: Hello mister dude
+  Send: 0
 --- !u!1001 &8414535872348375852
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -752,25 +756,25 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1874350192348672360, guid: 2dae65d4ce53310448e73a463bda9fc1, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7931222544154874343}
+      addedObject: {fileID: 7931222544154874351}
     - targetCorrespondingSourceObject: {fileID: 1874350192348672360, guid: 2dae65d4ce53310448e73a463bda9fc1, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7931222544154874351}
+      addedObject: {fileID: 7931222544154874356}
+    - targetCorrespondingSourceObject: {fileID: 1874350192348672360, guid: 2dae65d4ce53310448e73a463bda9fc1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7931222544154874353}
     - targetCorrespondingSourceObject: {fileID: 1874350192348672360, guid: 2dae65d4ce53310448e73a463bda9fc1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7931222544154874350}
     - targetCorrespondingSourceObject: {fileID: 1874350192348672360, guid: 2dae65d4ce53310448e73a463bda9fc1, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7931222544154874353}
+      addedObject: {fileID: 7931222544154874343}
     - targetCorrespondingSourceObject: {fileID: 1874350192348672360, guid: 2dae65d4ce53310448e73a463bda9fc1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7931222544154874349}
     - targetCorrespondingSourceObject: {fileID: 1874350192348672360, guid: 2dae65d4ce53310448e73a463bda9fc1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7931222544154874348}
-    - targetCorrespondingSourceObject: {fileID: 1874350192348672360, guid: 2dae65d4ce53310448e73a463bda9fc1, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7931222544154874352}
   m_SourcePrefab: {fileID: 100100000, guid: 2dae65d4ce53310448e73a463bda9fc1, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

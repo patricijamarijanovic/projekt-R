@@ -17,7 +17,7 @@ def choose_tts_model():
 # returns audiofile for given TTS model and text with optional emotion
 def load_tts_and_save_to_file(model_name, text, output_filename = "output", emotion = "neutral"):
     tts = TTS(model_name = model_name)
-    tts.tts_to_file(text = text, file_path = "../Assets/Resources/" + output_filename + ".wav", emotion = emotion)
+    tts.tts_to_file(text = text, file_path = "../Resources/" + output_filename + ".wav", emotion = emotion)
     return
 
 
@@ -29,5 +29,5 @@ while True:
     load_tts_and_save_to_file(
         model_name = my_model_name,
         text = my_text)
-    with open("../Assets/Resources/output.txt", "w") as file:
+    with open("../Resources/output.txt", "w") as file:
         file.write(my_text)

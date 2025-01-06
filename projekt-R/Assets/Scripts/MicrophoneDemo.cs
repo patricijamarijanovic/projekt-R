@@ -65,6 +65,8 @@ namespace Whisper.Samples
             }
             else
             {
+                microphoneRecord.echo = false;
+
                 microphoneRecord.StopRecord();
                 buttonText.text = "Record";
             }

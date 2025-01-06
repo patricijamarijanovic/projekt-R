@@ -16,7 +16,7 @@ ollama run llama3.2
 
 ### Upute za instalaciju STT
 * skinuti željeni model weight s [poveznice](https://huggingface.co/ggerganov/whisper.cpp/tree/main) (preporuka koristiti ggml-base.bin)
-* staviti .bin datoteku Assets/StreamingAssets/Whisper 
+* staviti .bin datoteku u Assets/StreamingAssets/Whisper 
 * u Whisper GameObject-u promijeniti Model Path 
 
 ## Modeli

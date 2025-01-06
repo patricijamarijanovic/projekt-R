@@ -17,7 +17,9 @@ ollama run llama3.2
 ### Upute za instalaciju STT
 * skinuti željeni model weight s [poveznice](https://huggingface.co/ggerganov/whisper.cpp/tree/main) (preporuka koristiti ggml-base.bin)
 * staviti .bin datoteku u Assets/StreamingAssets/Whisper 
-* u Whisper GameObject-u promijeniti Model Path 
+* u Whisper GameObject-u promijeniti Model Path
+
+* više o veličinama modela na [OpenAi readme](https://github.com/openai/whisper#available-models-and-languages)
 
 ## Modeli
 * **tts_models/en/ljspeech/glow-tts** --> verzija ženskastog/mješovitog TTS-a, najbolje zbog kombinacije kvalitete zvuka i brzine

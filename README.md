@@ -14,6 +14,11 @@ ollama run llama3.2
 * za **Windows** operativni sustav na [poveznici](https://youtu.be/zRaDe08cUIk?si=m4RBhnSUEjLjH-c0)
 * za **Linux** opreativni sustav na [poveznici](https://github.com/coqui-ai/TTS?tab=readme-ov-file#installation)
 
+### Upute za instalaciju STT
+* skinuti željeni model weight s [poveznice](https://huggingface.co/ggerganov/whisper.cpp/tree/main) (preporuka koristiti ggml-base.bin)
+* staviti .bin datoteku Assets/StreamingAssets/Whisper 
+* u Whisper GameObject-u promijeniti Model Path 
+
 ## Modeli
 * **tts_models/en/ljspeech/glow-tts** --> verzija ženskastog/mješovitog TTS-a, najbolje zbog kombinacije kvalitete zvuka i brzine
 * **tts_models/en/jenny/jenny** --> lijepi, ali spor engleski ženski glas
@@ -22,4 +27,3 @@ ollama run llama3.2
 
 ## Pokretanje
 * prije pokretanja scene unutar Unity-a, obavezno pokrenuti Pyhton skripte "**llama_flasky.py**" i "**tts.py**" **UNUTAR** virtualnog okruzenja, zatim pokrenuti scenu
-* odabrati objekt avatara i u LLMInteraction script komponenti unijeti tekst i pritisnuti Send

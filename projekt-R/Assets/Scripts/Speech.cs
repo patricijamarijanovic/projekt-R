@@ -9,7 +9,8 @@ using UnityEngine.UI;
 
 public class AvatarSpeech : MonoBehaviour
 {
-    public string Server_uri = "http://127.0.0.1:5005";
+    public LLMInteraction llm;
+    // public string Server_uri = "http://127.0.0.1:5005";
     public AudioSource audioSource;
     // private string previousText = "";
 
@@ -47,12 +48,12 @@ public class AvatarSpeech : MonoBehaviour
 
         string text = JsonConvert.SerializeObject(obj);
         Debug.Log("Speech: " + text);
-        StartCoroutine(PostRequest(Server_uri, text));
+        StartCoroutine(PostRequest(llm.Server_uri, text));
     }
 
     public IEnumerator PostRequest(string uri, string body)
     {
-        using (UnityWebRequest www = UnityWebRequest.Post($"{uri}", $"{body}", "application/json"))
+        using (UnityWebRequest www = UnityWebRequest.Post($"{uri}/tts", $"{body}", "application/json"))
         {
             yield return www.SendWebRequest();
 

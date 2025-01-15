@@ -4620,7 +4620,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2954bfc53cbd3cc43a52168874c128d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Server_uri: http://127.0.0.1:5005
+  llm: {fileID: 7931222544154874356}
   audioSource: {fileID: 7931222544154874351}
 --- !u!82 &7931222544154874351
 AudioSource:
@@ -4745,7 +4745,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MTC: {fileID: 7931222544154874353}
   AS: {fileID: 7931222544154874350}
-  Server_uri: http://127.0.0.1:5006
+  Server_uri: http://127.0.0.1:5005
   Entry: 
   Send: 0
 --- !u!1001 &8414535872348375852

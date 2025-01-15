@@ -12,7 +12,7 @@ public class LLMInteraction : MonoBehaviour
 {
     public MorphTargetController MTC;
     public AvatarSpeech AS;
-    public string Server_uri = "http://127.0.0.1:5006";
+    public string Server_uri = "http://127.0.0.1:5005";
     public string Entry;
     public bool Send = false;
 

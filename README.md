@@ -28,4 +28,4 @@ ollama run llama3.2
 * **tts_models/en/blizzard2013/capacitron-t2-c50** --> radi s emocijama, ali ne dobro baš
 
 ## Pokretanje
-* prije pokretanja scene unutar Unity-a, obavezno pokrenuti Pyhton skripte "**llama_flasky.py**" i "**tts.py**" **UNUTAR** virtualnog okruzenja, zatim pokrenuti scenu
+* prije pokretanja scene unutar Unity-a, obavezno pokrenuti **Ollama** aplikaciju (misli se na Ollama executable, ne na pokretanje modela unutar konzole), te Pyhton skriptu "**server.py**" **UNUTAR** virtualnog okruzenja, zatim pokrenuti scenu

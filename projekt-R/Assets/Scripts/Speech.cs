@@ -10,35 +10,39 @@ using UnityEngine.UI;
 public class AvatarSpeech : MonoBehaviour
 {
     public LLMInteraction llm;
-    // public string Server_uri = "http://127.0.0.1:5005";
     public AudioSource audioSource;
-    // private string previousText = "";
-
-    // string filePath = Path.Combine("Assets", "Resources", "output.txt");
+    public Animator animator;
+    public string idleAnimState = "Idle";
+    public string[] talkingAnimStates = { "Talking 1", "Talking 2", "Talking 3" }; 
+    public int TalkingAnimIndex = 0;
 
     void Start()
     {
-        // if (File.Exists(filePath)) 
-        // {
-        //     previousText = getTextGeneratedByPython();
-        //     StartCoroutine(LoadAndPlayAudio());
-        // }
+        audioSource.Stop();
+        animator.SetBool("IsTalking", false);
     }
 
     void Update()
     {
-        // // avatar speaks again only if the text has changed in output.txt
-        // if (File.Exists(filePath) && !previousText.Equals(getTextGeneratedByPython()))
-        // {
-        //     previousText = getTextGeneratedByPython();
-        //     StartCoroutine(LoadAndPlayAudio());
-        // }
+        if (audioSource.isPlaying)
+        {
+            if (!animator.GetBool("IsTalking"))
+            {
+                TalkingAnimIndex = Random.Range(0, talkingAnimStates.Length);
+                animator.SetBool("IsTalking", true);
+                animator.CrossFade(talkingAnimStates[TalkingAnimIndex], 0.2f);
+            }
+        }
+        else
+        {
+            if (animator.GetBool("IsTalking"))
+            {
+                animator.SetBool("IsTalking", false);
+                animator.CrossFade(idleAnimState, 0.2f);
+            }
+        }
     }
-
-    // public string getTextGeneratedByPython() {
-    //     return File.ReadAllText(filePath);
-    // }
-
+    
     public void Say(string input)
     {
         var obj = new 

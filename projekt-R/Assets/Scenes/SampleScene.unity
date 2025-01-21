@@ -7510,7 +7510,7 @@ MonoBehaviour:
   modelPath: Whisper/ggml-base.bin
   isModelPathInStreamingAssets: 1
   initOnAwake: 1
-  language: auto
+  language: en
   translateToEnglish: 0
   strategy: 0
   noContext: 1

@@ -13,91 +13,92 @@ public class MorphTargetController : MonoBehaviour
     public SkinnedMeshRenderer skinnedMeshRenderer = null;
     // private string previousText = "";
 
-    private readonly Dictionary<string, Dictionary<string, float>> emotionMappings = new Dictionary<string, Dictionary<string, float>>
+   private readonly Dictionary<string, Dictionary<string, float>> emotionMappings = new Dictionary<string, Dictionary<string, float>>
     {
-        { "joy", new Dictionary<string, float> { { "mouthSmile", 1f }, { "mouthOpen", 0.2f } } },
-        { "sadness", new Dictionary<string, float> { { "browDownLeft", 1f }, { "browDownRight", 1f }, { "mouthSmile", -0.5f } } },
-        { "anger", new Dictionary<string, float> { { "browDownLeft", 1f }, { "browDownRight", 1f }, { "noseSneerLeft", 1f }, { "noseSneerRight", 1f } } },
-        { "fear", new Dictionary<string, float> { { "eyeWideLeft", 1f }, { "eyeWideRight", 1f }, { "mouthOpen", 1f } } },
-        { "surprise", new Dictionary<string, float> { { "mouthOpen", 1f }, { "browOuterUpLeft", 1f }, { "browOuterUpRight", 1f } } }
+        {
+            "joy", new Dictionary<string, float>
+            {
+                { "mouthSmile", 0.6f },
+                { "mouthSmileLeft", 0.35f },
+                { "mouthSmileRight", 0.35f },
+                { "mouthOpen", 0.3f },
+                { "cheekSquintLeft", 0.6f },
+                { "cheekSquintRight", 0.6f },
+                { "eyeSquintLeft", 0.4f },
+                { "eyeSquintRight", 0.4f },
+                { "browOuterUpLeft", 0.3f },
+                { "browOuterUpRight", 0.3f }
+            }
+        },
+        {
+            "sadness", new Dictionary<string, float>
+            {
+                { "browDownLeft", 0.75f },
+                { "browDownRight", 0.75f },
+                { "browInnerUp", 0.7f },
+                { "mouthSmile", -0.4f },
+                { "mouthLeft", -0.3f },
+                { "mouthRight", -0.3f },
+                { "eyeWideLeft", -0.2f },
+                { "eyeWideRight", -0.2f },
+                { "cheekPuff", -0.3f },
+                { "jawOpen", 0.2f }
+            }
+        },
+        {
+            "anger", new Dictionary<string, float>
+            {
+                { "browDownLeft", 0.1f },
+                { "browDownRight", 0.1f },
+                { "browInnerUp", -0.1f },
+                { "noseSneerLeft", 1f },
+                { "noseSneerRight", 1f },
+                { "jawForward", 0.7f },
+                { "mouthPucker", 0.5f },
+                { "cheekSquintLeft", 0.3f },
+                { "cheekSquintRight", 0.3f },
+                { "mouthSmile", -0.5f }
+            }
+        },
+        {
+            "fear", new Dictionary<string, float>
+            {
+                { "eyeWideLeft", 0.45f },
+                { "eyeWideRight", 0.45f },
+                { "mouthOpen", 0.25f },
+                { "browOuterUpLeft", 0.5f },
+                { "browOuterUpRight", 0.5f },
+                { "browInnerUp", 0.6f },
+                { "jawOpen", 0.1f },
+                { "cheekSquintLeft", -0.2f },
+                { "cheekSquintRight", -0.2f }
+            }
+        },
+        {
+            "surprise", new Dictionary<string, float>
+            {
+                { "mouthOpen", 0.25f },
+                { "browOuterUpLeft", 0.45f },
+                { "browOuterUpRight", 0.45f },
+                { "browInnerUp", 0.45f },
+                { "eyeWideLeft", 0.5f },
+                { "eyeWideRight", 0.5f },
+                { "cheekPuff", 0.3f },
+                { "jawOpen", 0.1f }
+            }
+        }
     };
+
+
 
     void Start()
     {
-        // if (skinnedMeshRenderer == null)
-        // {
-        //     Debug.LogError("SkinnedMeshRenderer 'Renderer_Head' not found.");
-        //     return;
-        // }
-        // if (File.Exists(filePath)) 
-        // {
-        //     previousText = getTextGeneratedByPython();
-        //     StartCoroutine(RequestEmotionData(previousText));
-        // } 
+        SetBlendShapeWeight("browInnerUp", 0.2f);
     }
 
     void Update()
     {
-        // if (skinnedMeshRenderer == null)
-        // {
-        //     Debug.LogError("SkinnedMeshRenderer 'Renderer_Head' not found.");
-        //     return;
-        // }
-        // if(File.Exists(filePath) && !previousText.Equals(MorphTargetController.getTextGeneratedByPython())) 
-        // {
-        //     previousText = getTextGeneratedByPython();
-        //     StartCoroutine(RequestEmotionData(previousText));
-        // }
     }
-
-    // private IEnumerator RequestEmotionData(string message)
-    // {
-    //     TcpClient client = null;
-    //     NetworkStream stream = null;
-
-    //     try
-    //     {
-    //         client = new TcpClient("127.0.0.1", 5005);
-    //         stream = client.GetStream();
-    //         Debug.Log("Connected to Python server.");
-
-    //         Debug.Log("Sending message to Python server.");
-    //         byte[] data = Encoding.UTF8.GetBytes(message);
-    //         stream.Write(data, 0, data.Length);
-    //         stream.Flush();
-
-    //         Debug.Log("Waiting for response from Python server.");
-    //         byte[] buffer = new byte[1024];
-    //         int bytesRead = stream.Read(buffer, 0, buffer.Length);
-    //         if (bytesRead > 0)
-    //         {
-    //             string json = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-    //             Debug.Log($"Received JSON: {json}");
-    //             // AdjustMorphTargets(json);
-    //         }
-    //         else
-    //         {
-    //             Debug.LogWarning("Received 0 bytes. Connection may be closed.");
-    //         }
-    //     }
-    //     catch (SocketException ex)
-    //     {
-    //         Debug.LogError($"SocketException: {ex.Message}");
-    //     }
-    //     catch (System.Exception ex)
-    //     {
-    //         Debug.LogError($"Unexpected error: {ex.Message}");
-    //     }
-    //     finally
-    //     {
-    //         if (stream != null)
-    //             stream.Close();
-    //         if (client != null)
-    //             client.Close();
-    //     }
-
-    //     yield return null;
-    // }
 
     public void AdjustMorphTargets(JObject json)
     {
@@ -240,5 +241,6 @@ public class MorphTargetController : MonoBehaviour
         {
             skinnedMeshRenderer.SetBlendShapeWeight(i, 0);
         }
+        SetBlendShapeWeight("browInnerUp", 0.2f);
     }
 }

@@ -1,11 +1,11 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 import json
 import socket
 from langchain_ollama import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 from TTS.api import TTS
-import re
 import torch
+import os
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(device)
@@ -58,6 +58,8 @@ model = OllamaLLM(model = "llama3.2") # odabrani model
 prompt = ChatPromptTemplate.from_template(template)
 
 chain = prompt | model
+
+tts = TTS(model_name="tts_models/en/ljspeech/glow-tts").to(device)
 
 def handle_conversation(context, user_input):
     result = chain.invoke({"context": context, "question": user_input})
@@ -125,15 +127,25 @@ def chat():
 
 @app.route("/tts", methods=["POST"])
 def speech():
-    print("Got request")
-    data = request.get_json()
-    print("Got data")
-    print(data)
-    text = data.get("text", "")
-    tts = TTS(model_name="tts_models/en/ljspeech/glow-tts").to(device)
-    file_path = file_path = r"C:/Users/Admin/Desktop/TTS/audio/output.wav"
-    tts.tts_to_file(text=text, file_path=file_path, emotion="neutral")
-    return jsonify(201)
+    print("Got TTS request")
+    try:
+        data = request.get_json()
+        text = data.get("text", "")
+        print(f"Received text for TTS: {text}")
+
+        if not text:
+            return jsonify({"error": "No text provided for TTS"}), 400
+
+        # Generate the audio file and store it
+        output_dir = "output_audio"
+        os.makedirs(output_dir, exist_ok=True)
+        file_path = os.path.join(output_dir, "output.wav")
+        tts.tts_to_file(text=text, file_path=file_path, emotion="neutral")
+        return send_file(file_path, mimetype="audio/wav", as_attachment=True, download_name="output.wav")
+    
+    except Exception as e:
+        print(f"Error processing TTS: {e}")
+        return jsonify({"error": "An error occurred while processing TTS"}), 500
 
 
 if __name__ == "__main__":

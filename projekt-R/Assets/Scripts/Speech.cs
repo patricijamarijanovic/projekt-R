@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-using SFB; // Namespace for Standalone File Browser
 
 public class AvatarSpeech : MonoBehaviour
 {
@@ -14,7 +13,7 @@ public class AvatarSpeech : MonoBehaviour
     public string idleAnimState = "Idle";
     public string[] talkingAnimStates = { "Talking 1", "Talking 2", "Talking 3" };
     public int TalkingAnimIndex = 0;
-    private string folderPath; // Store the selected folder path
+    private string defaultFilePath;
 
     void Start()
     {
@@ -22,14 +21,7 @@ public class AvatarSpeech : MonoBehaviour
         audioSource.Stop();
         animator.SetBool("IsTalking", false);
 
-        if (PlayerPrefs.HasKey("SelectedFolderPath"))
-        {
-            folderPath = PlayerPrefs.GetString("SelectedFolderPath");
-        }
-        else
-        {
-            folderPath = Application.persistentDataPath;
-        }
+        defaultFilePath = Path.Combine(Application.persistentDataPath, "output.wav");
     }
 
     void Update()
@@ -69,39 +61,44 @@ public class AvatarSpeech : MonoBehaviour
     {
         using (UnityWebRequest www = UnityWebRequest.Post($"{uri}/tts", $"{body}", "application/json"))
         {
+            www.downloadHandler = new DownloadHandlerBuffer();
             yield return www.SendWebRequest();
-
             if (www.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError("AS - Error: " + www.error);
             }
             else
             {
-                Debug.Log(www.downloadHandler.text);
+                byte[] audioData = www.downloadHandler.data;
+                SaveAudioFile(audioData);
                 StartCoroutine(LoadAndPlayAudio());
             }
         }
     }
 
+    private void SaveAudioFile(byte[] audioData)
+    {
+        try
+        {
+            File.WriteAllBytes(defaultFilePath, audioData);
+            Debug.Log("Audio file saved at: " + defaultFilePath);
+        }
+        catch (IOException e)
+        {
+            Debug.LogError("Failed to save audio file: " + e.Message);
+        }
+    }
+
     private IEnumerator LoadAndPlayAudio()
     {
-        if (string.IsNullOrEmpty(folderPath))
+        if (!File.Exists(defaultFilePath))
         {
-            Debug.LogError("No folder path selected.");
-            yield break;
-        }
-
-        string filePath = Path.Combine(folderPath, "output.wav");
-        filePath = filePath.Replace("\\", "/");
-
-        if (!File.Exists(filePath))
-        {
-            Debug.LogError("Audio file not found at: " + filePath);
+            Debug.LogError("Audio file not found at: " + defaultFilePath);
             yield break;
         }
 
         // UnityWebRequest reloads audio file as AudioClip
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + filePath, AudioType.WAV))
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + defaultFilePath, AudioType.WAV))
         {
             yield return www.SendWebRequest();
 
@@ -112,28 +109,8 @@ public class AvatarSpeech : MonoBehaviour
             }
 
             AudioClip newClip = DownloadHandlerAudioClip.GetContent(www);
-
-            // Assign and play the new audio clip
             audioSource.clip = newClip;
             audioSource.Play();
-            Debug.Log("Playing new audio clip from selected folder.");
-        }
-    }
-
-    public void OpenFolderPicker()
-    {
-        string[] paths = StandaloneFileBrowser.OpenFolderPanel("Select Folder", "", false);
-
-        if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
-        {
-            folderPath = paths[0];
-            PlayerPrefs.SetString("SelectedFolderPath", folderPath);
-            PlayerPrefs.Save();
-            Debug.Log("Selected folder: " + folderPath);
-        }
-        else
-        {
-            Debug.LogWarning("No folder selected.");
         }
     }
 }

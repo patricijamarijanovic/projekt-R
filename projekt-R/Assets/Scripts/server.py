@@ -5,7 +5,10 @@ from langchain_ollama import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 from TTS.api import TTS
 import re
+import torch
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print(device)
 app = Flask(__name__)
 
 def fix_incomplete_json(result):
@@ -127,8 +130,9 @@ def speech():
     print("Got data")
     print(data)
     text = data.get("text", "")
-    tts = TTS(model_name="tts_models/en/ljspeech/glow-tts")
-    tts.tts_to_file(text=text, file_path="../Resources/output.wav", emotion="neutral")
+    tts = TTS(model_name="tts_models/en/ljspeech/glow-tts").to(device)
+    file_path = file_path = r"C:/Users/Admin/Desktop/TTS/audio/output.wav"
+    tts.tts_to_file(text=text, file_path=file_path, emotion="neutral")
     return jsonify(201)
 
 

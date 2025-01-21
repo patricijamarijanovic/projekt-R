@@ -1,36 +1,40 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI; // Required for UI components
 
 public class LLMInteraction : MonoBehaviour
 {
     public MorphTargetController MTC;
     public AvatarSpeech AS;
-    public string Server_uri = "http://127.0.0.1:5005";
+    public string Server_uri = "http://127.0.0.1:5005"; // Default server URI
     public string Entry;
     public bool Send = false;
 
+    public InputField ServerUriInputField; // UI InputField for server URI
     public string Context { get; set; }
 
-
-    // Start is called before the first frame update
     void Start()
     {
         Context = "";
+
+        // Initialize the InputField value if it exists
+        if (ServerUriInputField != null)
+        {
+            ServerUriInputField.text = Server_uri; // Set the default URI in the InputField
+            ServerUriInputField.onValueChanged.AddListener(OnServerUriChanged);
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if(Send)
-        { 
+        if (Send)
+        {
             Send = false;
+
             var payload = new
             {
                 context = Context,
@@ -44,12 +48,19 @@ public class LLMInteraction : MonoBehaviour
         }
     }
 
-    IEnumerator GetRequest(string uri) 
+    // Triggered whenever the ServerUriInputField's value changes
+    private void OnServerUriChanged(string newUri)
+    {
+        Server_uri = newUri;
+        Debug.Log("Server URI updated to: " + Server_uri);
+    }
+
+    IEnumerator GetRequest(string uri)
     {
         using (UnityWebRequest www = UnityWebRequest.Get(uri))
         {
             yield return www.SendWebRequest();
-            if(www.result != UnityWebRequest.Result.Success)
+            if (www.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError("LLM - Error: " + www.error);
             }
@@ -73,11 +84,10 @@ public class LLMInteraction : MonoBehaviour
             else
             {
                 JObject response = JObject.Parse(www.downloadHandler.text);
-                // Context = (response.GetValue("context") as JObject).ToString(Formatting.None);
                 Debug.Log(response);
                 Context = response["context"].ToString();
                 string answer = response["response"].ToString();
-                
+
                 MTC.AdjustMorphTargets(response);
                 AS.Say(answer);
             }

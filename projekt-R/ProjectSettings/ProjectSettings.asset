@@ -161,7 +161,8 @@ PlayerSettings:
   resetResolutionOnWindowResize: 0
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
-  applicationIdentifier: {}
+  applicationIdentifier:
+    Standalone: com.DefaultCompany.projekt-R
   buildNumber:
     Standalone: 0
     VisionOS: 0
@@ -657,7 +658,7 @@ PlayerSettings:
     PS5: READY_PLAYER_ME
     QNX: READY_PLAYER_ME
     Stadia: READY_PLAYER_ME
-    Standalone: READY_PLAYER_ME
+    Standalone: READY_PLAYER_ME;WHISPER_CUDA
     VisionOS: READY_PLAYER_ME
     WebGL: READY_PLAYER_ME
     Windows Store Apps: READY_PLAYER_ME

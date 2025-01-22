@@ -26,6 +26,7 @@ namespace Whisper.Samples
         public Toggle translateToggle;
         public Toggle vadToggle;
         public ScrollRect scroll;
+        public InputField ServerUriInputField;
 
         [Header("LLM Interaction")]
         public LLMInteraction llmInteraction;
@@ -75,6 +76,18 @@ namespace Whisper.Samples
         private async void OnRecordStop(AudioChunk recordedAudio)
         {
             buttonText.text = "Record";
+            button.interactable = false;
+            ServerUriInputField.interactable = false;
+            var ServerUriInputFieldImage = ServerUriInputField.GetComponent<Image>();
+            if (ServerUriInputFieldImage != null)
+            {
+                ServerUriInputFieldImage.color = Color.red;
+            }
+            var buttonImage = button.GetComponent<Image>();
+            if (buttonImage != null)
+            {
+                buttonImage.color = Color.red;
+            }
             _buffer = "";
 
             var sw = new Stopwatch();

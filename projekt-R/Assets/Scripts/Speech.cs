@@ -1,5 +1,6 @@
 using System.Collections;
 using System.IO;
+using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -21,6 +22,7 @@ public class AvatarSpeech : MonoBehaviour
     public Button recordButton;
     private Color originalButtonColor;
     public InputField ServerUriInputField;
+    public InputField inputField;
     private bool wasPlaying = false;
 
     void Start()
@@ -47,7 +49,7 @@ public class AvatarSpeech : MonoBehaviour
         {
             if (!animator.GetBool("IsTalking"))
             {
-                TalkingAnimIndex = Random.Range(0, talkingAnimStates.Length);
+                TalkingAnimIndex = UnityEngine.Random.Range(0, talkingAnimStates.Length);
                 animator.SetBool("IsTalking", true);
                 animator.CrossFade(talkingAnimStates[TalkingAnimIndex], 0.15f);
             }
@@ -71,6 +73,7 @@ public class AvatarSpeech : MonoBehaviour
         {
             recordButton.interactable = true;
             ServerUriInputField.interactable = true;
+            inputField.interactable = true;
             var buttonImage = recordButton.GetComponent<Image>();
             var ServerUriInputFieldImage = ServerUriInputField.GetComponent<Image>();
             if (buttonImage != null)
@@ -80,6 +83,11 @@ public class AvatarSpeech : MonoBehaviour
             if (ServerUriInputFieldImage != null)
             {
                 ServerUriInputFieldImage.color = originalButtonColor;
+            }
+            var inputImage = inputField.GetComponent<Image>();
+            if (inputImage != null)
+            {
+                inputImage.color = originalButtonColor;
             }
         }
     }
@@ -96,66 +104,85 @@ public class AvatarSpeech : MonoBehaviour
         StartCoroutine(PostRequest(llm.Server_uri, text, json));
     }
 
-    public IEnumerator PostRequest(string uri, string body, JObject json)
+   public IEnumerator PostRequest(string uri, string body, JObject json)
     {
-        using (UnityWebRequest www = UnityWebRequest.Post($"{uri}/tts", $"{body}", "application/json"))
+        using (UnityWebRequest www = UnityWebRequest.Post(uri + "/tts", body, "application/json"))
         {
             www.downloadHandler = new DownloadHandlerBuffer();
             yield return www.SendWebRequest();
+
             if (www.result != UnityWebRequest.Result.Success)
             {
                 ShowError("Error: " + www.error);
-                Debug.LogError("AS - Error: " + www.error);
+                Debug.LogError("Error: " + www.error);
             }
             else
             {
                 byte[] audioData = www.downloadHandler.data;
-                SaveAudioFile(audioData);
-                StartCoroutine(LoadAndPlayAudio(json));
+                if (audioData == null || audioData.Length == 0)
+                {
+                    ShowError("Error: Received empty audio data.");
+                    Debug.LogError("Received empty audio data.");
+                    yield break;
+                }
+
+                Debug.Log("Received audio data successfully.");
+                StartCoroutine(LoadAndPlayAudio(audioData, json));
             }
         }
     }
 
-    private void SaveAudioFile(byte[] audioData)
+    private IEnumerator LoadAndPlayAudio(byte[] audioData, JObject json)
     {
-        try
+        if (audioData == null || audioData.Length == 0)
         {
-            File.WriteAllBytes(defaultFilePath, audioData);
-            Debug.Log("Audio file saved at: " + defaultFilePath);
-        }
-        catch (IOException e)
-        {
-            ShowError("Error: " + e.Message);
-            Debug.LogError("Failed to save audio file: " + e.Message);
-        }
-    }
-
-    private IEnumerator LoadAndPlayAudio(JObject json)
-    {
-        if (!File.Exists(defaultFilePath))
-        {
-            ShowError("Audio file not found at: " + defaultFilePath);
-            Debug.LogError("Audio file not found at: " + defaultFilePath);
+            ShowError("Error: Audio data is null or empty.");
+            Debug.LogError("Audio data is null or empty.");
             yield break;
         }
 
-        // UnityWebRequest reloads audio file as AudioClip
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + defaultFilePath, AudioType.WAV))
+        // Create an AudioClip from the byte array
+        AudioClip newClip = CreateAudioClipFromWav(audioData);
+
+        if (newClip == null)
         {
-            yield return www.SendWebRequest();
+            ShowError("Failed to decode audio data.");
+            Debug.LogError("Failed to decode audio data.");
+            yield break;
+        }
 
-            if (www.result != UnityWebRequest.Result.Success)
+        audioSource.clip = newClip;
+        MTC.AdjustMorphTargets(json);
+        infoDisplay.text = string.Empty;
+        audioSource.Play();
+
+        Debug.Log("Audio is playing.");
+        yield return null;
+    }
+    private AudioClip CreateAudioClipFromWav(byte[] wavData)
+    {
+        using (MemoryStream memStream = new MemoryStream(wavData))
+        {
+            var reader = new BinaryReader(memStream);
+            reader.BaseStream.Seek(22, SeekOrigin.Begin);
+            short channels = reader.ReadInt16();
+            int sampleRate = reader.ReadInt32();
+            reader.BaseStream.Seek(34, SeekOrigin.Begin);
+            short bitsPerSample = reader.ReadInt16();
+            reader.BaseStream.Seek(40, SeekOrigin.Begin);
+            int dataSize = reader.ReadInt32();
+            int samples = dataSize / (channels * bitsPerSample / 8);
+            reader.BaseStream.Seek(44, SeekOrigin.Begin);
+            byte[] wavDataBytes = reader.ReadBytes(dataSize);
+            float[] floatData = new float[samples];
+            for (int i = 0; i < samples; i++)
             {
-                ShowError("Failed to load audio file: " + www.error);
-                Debug.LogError("Failed to load audio file: " + www.error);
-                yield break;
+                short sample = BitConverter.ToInt16(wavDataBytes, i * 2);
+                floatData[i] = sample / 32768.0f;
             }
-
-            AudioClip newClip = DownloadHandlerAudioClip.GetContent(www);
-            audioSource.clip = newClip;
-            MTC.AdjustMorphTargets(json);
-            infoDisplay.text = string.Empty;
-            audioSource.Play();
+            AudioClip audioClip = AudioClip.Create("GeneratedClip", samples, channels, sampleRate, false);
+            audioClip.SetData(floatData, 0);
+            return audioClip;
         }
     }
 
@@ -167,6 +194,7 @@ public class AvatarSpeech : MonoBehaviour
             errorDisplay.text = message.Replace("\n", " ");
             recordButton.interactable = true;
             ServerUriInputField.interactable = true;
+            inputField.interactable = true;
             var buttonImage = recordButton.GetComponent<Image>();
             var ServerUriInputFieldImage = ServerUriInputField.GetComponent<Image>();
             if (buttonImage != null)
@@ -177,6 +205,11 @@ public class AvatarSpeech : MonoBehaviour
             {
                 ServerUriInputFieldImage.color = originalButtonColor;
             }
+            var inputImage = inputField.GetComponent<Image>();
+            if (inputImage != null)
+            {
+                inputImage.color = originalButtonColor;
+            } 
             StartCoroutine(ClearErrorAfterDelay(5));
         }
         else

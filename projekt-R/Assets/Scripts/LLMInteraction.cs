@@ -19,6 +19,7 @@ public class LLMInteraction : MonoBehaviour
     public Text infoDisplay;
     public Button recordButton;
     private Color originalButtonColor;
+    public InputField inputField;
 
     void Start()
     {
@@ -116,6 +117,7 @@ public class LLMInteraction : MonoBehaviour
             errorDisplay.text = message.Replace("\n", " ");
             recordButton.interactable = true;
             ServerUriInputField.interactable = true;
+            inputField.interactable = true;
             var buttonImage = recordButton.GetComponent<Image>();
             var ServerUriInputFieldImage = ServerUriInputField.GetComponent<Image>();
             if (buttonImage != null)
@@ -126,6 +128,11 @@ public class LLMInteraction : MonoBehaviour
             {
                 ServerUriInputFieldImage.color = originalButtonColor;
             }
+            var inputImage = inputField.GetComponent<Image>();
+            if (inputImage != null)
+            {
+                inputImage.color = originalButtonColor;
+            }    
             StartCoroutine(ClearErrorAfterDelay(5));
         }
         else
